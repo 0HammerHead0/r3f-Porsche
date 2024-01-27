@@ -4,40 +4,43 @@ import React, {useRef, useState,useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import CustomObject from './CustomObject'
 import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
-import { EffectComposer, Bloom, DepthOfField, Vignette, Noise, SMAA } from '@react-three/postprocessing';
+import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, SMAA,GodRays, FXAA,Sepia, SelectiveBloom, ShockWave, HueSaturation, Scanline , Autofocus, LensFlare} from '@react-three/postprocessing';
 import * as THREE from 'three'
 import PropTypes from 'prop-types';
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {getProject} from '@theatre/core'
-import { editable as e, SheetProvider } from '@theatre/r3f'
-const demoSheet = getProject('Demo Project').sheet('Demo Sheet')
+import { editable as e, SheetProvider,PerspectiveCamera,useCurrentSheet,} from "@theatre/r3f";
+import state1 from '../public/json/state1.json'
+
+
+const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
 
 
 
 function Model({envMap}) {
-  const gltf = useGLTF('models/besht.glb');
+  const gltf = useGLTF('models/final1.glb');
   
   const model = gltf.scene;
   model.traverse((child) => {
     if (child.isMesh) {
       child.castShadow = true;
       child.receiveShadow = true;
+      child.material.shadeFlat = false;
       if(child.name.startsWith("Cube") || child.name.startsWith("string")){
         child.castShadow = false;
       }
-      if(!child.name.startsWith("Cylinder") && !child.name.startsWith("Cube") && !child.name.startsWith("string")){
+      if(!child.name.startsWith("Env") && !child.name.startsWith("Cube") && !child.name.startsWith("string")){
         child.material.envMap = envMap;
         child.material.envMapIntensity = 0.2;
         // doubleside
         child.material.side = THREE.DoubleSide;
       }
-      if(child.name.startsWith("Cylinder")){
-        const lightMapTexture = new THREE.TextureLoader().load('lightMap.png');
-        lightMapTexture.flipY = false;
+      if(child.name.startsWith("Env")){
+        // const lightMapTexture = new THREE.TextureLoader().load('lightMap.png');
+        // console.log(lightMapTexture)
+        // lightMapTexture.flipY = false;
         child.material.side = THREE.DoubleSide;
-        child.material.lightMap = lightMapTexture;
-        child.material.lightMapIntensity = 2;
-
+        // child.material.lightMap = lightMapTexture;
       }
     }
   });
@@ -52,7 +55,7 @@ export default function Experience() {
   const spotLightSmallConfig = {
     castShadow: true,
     position: [0,4, 0],
-    angle: Math.PI / 10,
+    angle: Math.PI / 3,
     penumbra: 1,
     decay: 1.7,
     distance: 15,
@@ -65,15 +68,20 @@ export default function Experience() {
     shadowCameraFar: 20,
     fov: 30,
   };
+
   const { gl, scene } = useThree();
+  const bloomLayer = useRef();
   const [envMap, setEnvMap] = useState(null);
   useEffect(() => {
+    bloomLayer.current = new THREE.Layers();
+    bloomLayer.current.set(1);
     const pmremGenerator = new THREE.PMREMGenerator(gl);
     const hdrTexture = new RGBELoader().load('hdri/second.hdr', (texture) => {
+      // texture.flipZ = false;
+      texture.flipZ = true;
       const newEnvMap = pmremGenerator.fromEquirectangular(texture).texture;
       newEnvMap.needsUpdate = true;
       setEnvMap(newEnvMap);
-      
       texture.dispose();
       pmremGenerator.dispose();
     });
@@ -82,23 +90,48 @@ export default function Experience() {
       pmremGenerator.dispose();
     };
   }, [gl]);
-  const spotLightSmallRef = useRef();
+  const spotLightSmall1 = {
+    castShadow: false,
+    position: [-8.61, 3.878, -3.202],
+    angle: 1.4,
+    penumbra: 1.063,
+    decay: -0.4,
+    distance: 15,
+    intensity: 0.1,
+    shadowBias: -0.001,
+    shadowMapSizeWidth: 2048,
+    shadowMapSizeHeight: 2048,
+    shadowFilter: THREE.PCFSoftShadowMap,
+    shadowCameraNear: 1,
+    shadowCameraFar: 20,
+    fov: 30,
+  }
+const pointLightConfig = {
+  intensity : 6.65,
+  distance : 5.9,
+  decay : 1.65,
+  color: "#dbb788",
+  scale: [5,5,5]
+}
+
+  
+  
+  const spotLightSmallRefs = Array.from({ length: 4 }, () => React.createRef());
   useFrame(({ state, delta }) => {
-    if (spotLightSmallRef.current) {
-      const position = spotLightSmallRef.current.position;
-      position.y = 0;
-      spotLightSmallRef.current.target.position.copy(position);
-      console.log(position);
-      spotLightSmallRef.current.target.updateMatrixWorld();
-    }
+    spotLightSmallRefs.forEach((spotLightSmallRef, index) => {
+      if (spotLightSmallRef.current) {
+        const position = spotLightSmallRef.current.position;
+        position.y = 0;
+        spotLightSmallRef.current.target.position.copy(position);
+        spotLightSmallRef.current.target.updateMatrixWorld();
+      }
+    });
   });
+  const bias= -0.001;
     return (
       <>
-        <SheetProvider sheet={demoSheet}>
           <OrbitControls />
-          {/* <e.directionalLight theatreKey="DirectionalLight" intensity={0.5} castShadow/> */}
-          {/* <e.pointLight theatreKey="point1"color={0xffffff} intensity={0.1} position={[5, 5, 5]} /> */}
-          <e.ambientLight theatreKey="AmbientLight" intensity={0.04}castShadow/>
+          <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
           <e.spotLight theatreKey="SpotLight" 
             castShadow 
             position={[0, 10, 0]}
@@ -113,13 +146,36 @@ export default function Experience() {
             shadow-camera-far={20} // Adjust far plane
             fov={30}
           />
-          {/* <e.spotLight ref={spotLightSmallRef} theatreKey="SpotLightSmall" {...spotLightSmallConfig}/> */}
+          <e.pointLight theatreKey="tubelight-enhance" castShadow={false}/>
+          {/* <e.spotLight ref={spotLightSmallRefs[0]} theatreKey="SpotLightSmall" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[1]} theatreKey="SpotLightSmall1" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[2]} theatreKey="SpotLightSmall2" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[3]} theatreKey="SpotLightSmall3" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[4]} theatreKey="SpotLightSmall4" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[5]} theatreKey="SpotLightSmall5" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[6]} theatreKey="SpotLightSmall6" {...spotLightSmallConfig}/>
+          <e.spotLight ref={spotLightSmallRefs[7]} theatreKey="SpotLightSmall7" {...spotLightSmallConfig}/> */}
+          <e.pointLight theatreKey="PointLight" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight1" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight2" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight3" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight4" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight5" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight7" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+          <e.pointLight theatreKey="PointLight10" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+
           <Model receiveShadow castShadow envMap={envMap}/>
           <EffectComposer>
-            <Bloom luminanceThreshold={0} luminanceSmoothing={20} height={300} />
+            {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
+            <Bloom luminanceThreshold={2} luminanceSmoothing={5} height={1000} />
+            {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
+            <Vignette eskil={false} offset={0.05} darkness={0.8} />
             <SMAA />
           </EffectComposer>
-        </SheetProvider>
+          <PerspectiveCamera makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />
       </>
     )
 }
