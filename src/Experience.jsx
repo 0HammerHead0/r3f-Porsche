@@ -18,7 +18,7 @@ const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
 
 
 function Model({envMap}) {
-  const gltf = useGLTF('models/others/floor_changed.glb');
+  const gltf = useGLTF('models/final1.glb');
   const model = gltf.scene;
   model.traverse((child) => {
     if (child.isMesh) {
