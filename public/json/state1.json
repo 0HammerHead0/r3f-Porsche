@@ -20,9 +20,9 @@
           },
           "SpotLight": {
             "position": {
-              "x": 0,
+              "x": -0.8375463092522546,
               "y": 9.751885642065854,
-              "z": 0
+              "z": -0.28308199131078493
             },
             "penumbra": 1.1640000000000084,
             "angle": 0.38215926535897937,
@@ -864,6 +864,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "sd0x8DWrdKPTe6V2",
     "Zqc1BfslE9v1v2q1",
     "kTeSnErBx4z5d3yC"
   ]
