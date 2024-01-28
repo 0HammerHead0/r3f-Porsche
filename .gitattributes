@@ -1,3 +1,4 @@
 public/models/final1.glb filter=lfs diff=lfs merge=lfs -text
 public/models/final1.glb filter=lfs diff=lfs merge=lfs -text
 public/models/final1.glb filter=lfs diff=lfs merge=lfs -text
+public/hdri/final.hdr filter=lfs diff=lfs merge=lfs -text

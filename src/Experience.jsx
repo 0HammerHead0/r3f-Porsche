@@ -32,7 +32,7 @@ function Model({envMap}) {
       if(!child.name.startsWith("Env") && !child.name.startsWith("Cube") && !child.name.startsWith("string")){
         child.material.envMap = envMap;
         console.log(child.material);
-        child.material.envMapIntensity = 2;
+        child.material.envMapIntensity = 0.4;
         // doubleside
         child.material.side = THREE.DoubleSide;
       }
@@ -73,9 +73,7 @@ export default function Experience() {
     bloomLayer.current = new THREE.Layers();
     bloomLayer.current.set(1);
     const pmremGenerator = new THREE.PMREMGenerator(gl);
-    const hdrTexture = new RGBELoader().load('hdri/third.hdr', (texture) => {
-      // texture.flipZ = false;
-      texture.flipZ = true;
+    const hdrTexture = new RGBELoader().load('hdri/final.hdr', (texture) => {
       const newEnvMap = pmremGenerator.fromEquirectangular(texture).texture;
       newEnvMap.needsUpdate = true;
       setEnvMap(newEnvMap);
@@ -167,7 +165,7 @@ const pointLightConfig = {
           <Model receiveShadow castShadow envMap={envMap}/>
           <EffectComposer>
             {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-            <Bloom luminanceThreshold={2} luminanceSmoothing={5} height={1000} />
+            <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
             {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
             <Vignette eskil={false} offset={0.05} darkness={0.8} />
             <SMAA />
