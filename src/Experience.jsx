@@ -18,8 +18,7 @@ const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
 
 
 function Model({envMap}) {
-  const gltf = useGLTF('models/final1.glb');
-  
+  const gltf = useGLTF('models/others/floor_changed.glb');
   const model = gltf.scene;
   model.traverse((child) => {
     if (child.isMesh) {
@@ -31,13 +30,13 @@ function Model({envMap}) {
       }
       if(!child.name.startsWith("Env") && !child.name.startsWith("Cube") && !child.name.startsWith("string")){
         child.material.envMap = envMap;
-        console.log(child.material);
-        child.material.envMapIntensity = 0.4;
-        // doubleside
+        child.material.envMapIntensity = 0.7;
         child.material.side = THREE.DoubleSide;
       }
-      if(child.name.startsWith("Env")){
+      if(child.name.startsWith("Env001")){
         child.material.side = THREE.DoubleSide;
+        child.material.envMap = envMap;
+        child.material.envMapIntensity = 0.1;
       }
     }
   });
@@ -125,6 +124,7 @@ const pointLightConfig = {
   const bias= -0.001;
     return (
       <>
+          <fog attach="fog" color="white" near={1} far={40} />
           <OrbitControls />
           <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
           <e.spotLight theatreKey="SpotLight" 
@@ -165,9 +165,9 @@ const pointLightConfig = {
           <Model receiveShadow castShadow envMap={envMap}/>
           <EffectComposer>
             {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-            <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
+            {/* <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} /> */}
             {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
-            <Vignette eskil={false} offset={0.05} darkness={0.8} />
+            <Vignette eskil={false} offset={0.05} darkness={1} />
             <SMAA />
             <FXAA />
           </EffectComposer>
