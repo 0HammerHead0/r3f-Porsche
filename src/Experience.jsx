@@ -31,16 +31,13 @@ function Model({envMap}) {
       }
       if(!child.name.startsWith("Env") && !child.name.startsWith("Cube") && !child.name.startsWith("string")){
         child.material.envMap = envMap;
-        child.material.envMapIntensity = 0.2;
+        console.log(child.material);
+        child.material.envMapIntensity = 2;
         // doubleside
         child.material.side = THREE.DoubleSide;
       }
       if(child.name.startsWith("Env")){
-        // const lightMapTexture = new THREE.TextureLoader().load('lightMap.png');
-        // console.log(lightMapTexture)
-        // lightMapTexture.flipY = false;
         child.material.side = THREE.DoubleSide;
-        // child.material.lightMap = lightMapTexture;
       }
     }
   });
@@ -76,7 +73,7 @@ export default function Experience() {
     bloomLayer.current = new THREE.Layers();
     bloomLayer.current.set(1);
     const pmremGenerator = new THREE.PMREMGenerator(gl);
-    const hdrTexture = new RGBELoader().load('hdri/second.hdr', (texture) => {
+    const hdrTexture = new RGBELoader().load('hdri/third.hdr', (texture) => {
       // texture.flipZ = false;
       texture.flipZ = true;
       const newEnvMap = pmremGenerator.fromEquirectangular(texture).texture;
@@ -174,6 +171,7 @@ const pointLightConfig = {
             {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
             <Vignette eskil={false} offset={0.05} darkness={0.8} />
             <SMAA />
+            <FXAA />
           </EffectComposer>
           <PerspectiveCamera makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />
       </>

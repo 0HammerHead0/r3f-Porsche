@@ -1,5 +1,5 @@
 node_modules
 dist
-public/models
+public/models/others
 public/hdri
 public/lightMap.png
