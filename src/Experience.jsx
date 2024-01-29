@@ -11,6 +11,7 @@ import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {getProject} from '@theatre/core'
 import { editable as e, SheetProvider,PerspectiveCamera,useCurrentSheet,} from "@theatre/r3f";
 import state1 from '../public/json/state1.json'
+import './style.css'
 
 
 const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
@@ -24,7 +25,6 @@ function Model({envMap}) {
     if (child.isMesh) {
       child.castShadow = true;
       child.receiveShadow = true;
-      child.material.shadeFlat = false;
       if(child.name.startsWith("Cube") || child.name.startsWith("string")){
         child.castShadow = false;
       }
@@ -124,16 +124,22 @@ const pointLightConfig = {
   const bias= -0.001;
     return (
       <>
-        <e.group theatreKey="group" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text font={"public/typeface/EuropeUnderground_light.ttf"}>
-            UNLEASH THE {"\n"}THRILL
-            <meshBasicMaterial attach="material" color="white" side={THREE.DoubleSide}/>
+        <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text font={"public/typeface/TrinosStencil.ttf"}>
+            UNLEASH the
+            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
-        <fog attach="fog" color="white" near={1.5} far={40} />
+        <e.group theatreKey="thrill" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text font={"public/typeface/TrinosStencil.ttf"}>
+            THRILL
+            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
+          </Text>
+        </e.group>
+        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={32} />
         <OrbitControls />
         <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
-        <e.spotLight theatreKey="SpotLight" 
+        <e.spotLight theatreKey="SpotLight"
           castShadow 
           position={[0, 10, 0]}
           angle={Math.PI / 10}
@@ -154,18 +160,19 @@ const pointLightConfig = {
         {/* <e.pointLight theatreKey="PointLight3" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight4" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         {/* <e.pointLight theatreKey="PointLight5" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
-        <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        {/* <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight7" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight10" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-
+        {/* <e.group theatreKey="Model"> */}
         <Model receiveShadow castShadow envMap={envMap}/>
+        {/* </e.group> */}
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
           <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
           {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
-          <Vignette eskil={false} offset={0.05} darkness={1} />
+          <Vignette eskil={false} offset={0} darkness={1.1} />
             <SMAA />
         </EffectComposer>
         <PerspectiveCamera makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />

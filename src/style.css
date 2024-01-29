@@ -1,0 +1,92 @@
+:root {
+    --header-width: 100%;
+    --header-height: 50px;
+    --header-color: rgba(0, 0, 0, 0.375);
+    --header-border-color: #faf9f698;
+}
+
+.header {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: var(--header-width);
+    height: var(--header-height);
+    color: white;
+    background: linear-gradient(to right, transparent 0%, var(--header-color) 30%, var(--header-color) 70%, transparent  100%);
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    backdrop-filter: blur(3px);
+
+    font-family: "Raleway", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600 ;
+    font-style: normal;
+}
+.header::before,
+.header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent 8%,var(--header-border-color) 30%, var(--header-border-color) 70%,transparent  92%);
+    
+}
+
+.header::before {
+    top: 0;
+}
+
+.header::after {
+    bottom: 0;
+}
+
+
+#porsche-logo{
+    margin-left: 200px;
+}
+#porsche-logo svg{
+    height: 12px;
+    width: 200px;
+}
+
+.menu{
+    height: 100%;
+    display:flex;
+    align-items: center;
+    cursor: pointer;    
+}
+.menu svg{
+    height: 10px;
+    width: 50px;
+}
+
+
+.right{
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-right: 200px;
+    width: 30%;
+}
+
+
+.build-price, .current-offers{
+    cursor : pointer;
+}
+
+#porsche-logo, .menu, .build-price, .current-offers{
+    opacity: 0.6;
+    filter: blur(0.6px);
+    transition: opacity 0.1s ease-in-out;
+}
+#porsche-logo:hover, .menu:hover, .build-price:hover, .current-offers:hover{
+    filter: blur(0px);
+    opacity: 1;
+}
+
