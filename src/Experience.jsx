@@ -3,7 +3,7 @@
 import React, {useRef, useState,useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import CustomObject from './CustomObject'
-import { OrbitControls, useGLTF, Environment } from '@react-three/drei';
+import { OrbitControls, useGLTF, Text , Environment } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, SMAA,GodRays, FXAA,Sepia, SelectiveBloom, ShockWave, HueSaturation, Scanline , Autofocus, LensFlare} from '@react-three/postprocessing';
 import * as THREE from 'three'
 import PropTypes from 'prop-types';
@@ -124,54 +124,51 @@ const pointLightConfig = {
   const bias= -0.001;
     return (
       <>
-          <fog attach="fog" color="white" near={1} far={40} />
-          <OrbitControls />
-          <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
-          <e.spotLight theatreKey="SpotLight" 
-            castShadow 
-            position={[0, 10, 0]}
-            angle={Math.PI / 10} 
-            penumbra={1} decay={1.7} 
-            distance={15} intensity={50} 
-            shadow-bias={-0.001} 
-            shadow-mapSize-width={2048} 
-            shadow-mapSize-height={2048} 
-            shadow-filter={THREE.PCFSoftShadowMap}
-            shadow-camera-near={1} // Adjust near plane
-            shadow-camera-far={20} // Adjust far plane
-            fov={30}
-          />
-          <e.pointLight theatreKey="tubelight-enhance" castShadow={false}/>
-          {/* <e.spotLight ref={spotLightSmallRefs[0]} theatreKey="SpotLightSmall" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[1]} theatreKey="SpotLightSmall1" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[2]} theatreKey="SpotLightSmall2" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[3]} theatreKey="SpotLightSmall3" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[4]} theatreKey="SpotLightSmall4" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[5]} theatreKey="SpotLightSmall5" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[6]} theatreKey="SpotLightSmall6" {...spotLightSmallConfig}/>
-          <e.spotLight ref={spotLightSmallRefs[7]} theatreKey="SpotLightSmall7" {...spotLightSmallConfig}/> */}
-          <e.pointLight theatreKey="PointLight" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight1" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight2" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight3" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight4" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight5" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight7" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-          <e.pointLight theatreKey="PointLight10" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        <e.group theatreKey="group" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text font={"public/typeface/EuropeUnderground_light.ttf"}>
+            UNLEASH THE {"\n"}THRILL
+            <meshBasicMaterial attach="material" color="white" side={THREE.DoubleSide}/>
+          </Text>
+        </e.group>
+        <fog attach="fog" color="white" near={1.5} far={40} />
+        <OrbitControls />
+        <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
+        <e.spotLight theatreKey="SpotLight" 
+          castShadow 
+          position={[0, 10, 0]}
+          angle={Math.PI / 10}
+          penumbra={1} decay={1.7}
+          distance={15} intensity={50}
+          shadow-bias={-0.001}
+          shadow-mapSize-width={2048} 
+          shadow-mapSize-height={2048} 
+          shadow-filter={THREE.PCFSoftShadowMap}
+          shadow-camera-near={1} // Adjust near plane
+          shadow-camera-far={20} // Adjust far plane
+          fov={30}
+        />
+        <e.pointLight theatreKey="tubelight-enhance" castShadow={false}/>
+        {/* <e.pointLight theatreKey="PointLight" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
+        {/* <e.pointLight theatreKey="PointLight1" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
+        <e.pointLight theatreKey="PointLight2" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        {/* <e.pointLight theatreKey="PointLight3" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
+        <e.pointLight theatreKey="PointLight4" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        {/* <e.pointLight theatreKey="PointLight5" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
+        <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        <e.pointLight theatreKey="PointLight7" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
+        <e.pointLight theatreKey="PointLight10" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
 
-          <Model receiveShadow castShadow envMap={envMap}/>
-          <EffectComposer>
-            {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-            {/* <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} /> */}
-            {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
-            <Vignette eskil={false} offset={0.05} darkness={1} />
+        <Model receiveShadow castShadow envMap={envMap}/>
+        <EffectComposer>
+          {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
+          <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
+          {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
+          <Vignette eskil={false} offset={0.05} darkness={1} />
             <SMAA />
-            <FXAA />
-          </EffectComposer>
-          <PerspectiveCamera makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />
+        </EffectComposer>
+        <PerspectiveCamera makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />
       </>
     )
 }
