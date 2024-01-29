@@ -3,7 +3,7 @@
 import React, {useRef, useState,useEffect } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import CustomObject from './CustomObject'
-import { OrbitControls, useGLTF, Text , Environment } from '@react-three/drei';
+import { OrbitControls, useGLTF, Text , Environment,SpotLight, AdaptiveDpr, BakeShadows,PerformanceMonitor ,MeshReflectorMaterial } from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, SMAA,GodRays, FXAA,Sepia, SelectiveBloom, ShockWave, HueSaturation, Scanline , Autofocus, LensFlare} from '@react-three/postprocessing';
 import * as THREE from 'three'
 import PropTypes from 'prop-types';
@@ -27,6 +27,7 @@ function Model({envMap}) {
       child.receiveShadow = true;
       if(child.name.startsWith("Cube") || child.name.startsWith("string")){
         child.castShadow = false;
+        child.material.toneMapped = false;
       }
       if(!child.name.startsWith("Env") && !child.name.startsWith("Cube") && !child.name.startsWith("string")){
         child.material.envMap = envMap;
@@ -124,6 +125,21 @@ const pointLightConfig = {
   const bias= -0.001;
     return (
       <>
+        <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
+          <planeGeometry />
+          <MeshReflectorMaterial
+          blur={[100, 100]}
+          resolution ={2048}
+          mixBlur={0}
+          mixStrength={10}
+          metalness={0.8 }
+          depthScale={10}
+          minDepthThreshold={0.9}
+          maxDepthThreshold={1}
+          roughness={0}
+          color="#ffffff"
+          />
+        </e.mesh>
         <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
           <Text font={"public/typeface/TrinosStencil.ttf"}>
             UNLEASH the
@@ -137,7 +153,6 @@ const pointLightConfig = {
           </Text>
         </e.group>
         <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={32} />
-        <OrbitControls />
         <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
         <e.spotLight theatreKey="SpotLight"
           castShadow 
@@ -167,6 +182,9 @@ const pointLightConfig = {
         <e.pointLight theatreKey="PointLight10" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         {/* <e.group theatreKey="Model"> */}
         <Model receiveShadow castShadow envMap={envMap}/>
+        <BakeShadows />
+        <AdaptiveDpr pixelated />
+        <PerformanceMonitor />
         {/* </e.group> */}
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
