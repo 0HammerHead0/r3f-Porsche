@@ -93,8 +93,7 @@
 .circleScroll{
     --knob-dimension: 18px;
     --circle-top: calc(50% - 350px);
-    --circle-left: calc(50% - 180px);
-
+    --circle-left: calc(50% - 100px);
 }
 .circle{
     z-index: 100;
@@ -104,7 +103,47 @@
     pointer-events: none;
     opacity: 0.6;
 }
+.knob{
+    opacity:0.1;
+}
+.knob:hover{
+    opacity:1;
+}
+.footer{
+    z-index: 100;
+    width: 100vw;
+    height: 100px;
+    bottom: 0;
+    position: fixed;
+    color:white;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    /* gap: 40px; */
+    font-family: "Raleway", sans-serif;
+    font-weight: 600 ;
+    font-size: 20px;
+    text-shadow: 0px 0px 10px #000;
+}
+.share{
+    position: absolute;
+    opacity:0.6;
+    left: 40px;
+    cursor:default;
+}
+.share:hover{
+    opacity:1;
 
+}
+.mouse{
+    background-image: url(../public/mouse.png);
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-left: 40px;
+    opacity: 0;
+}
 .knob{
     width: var(--knob-dimension);
     height: var(--knob-dimension);

@@ -4,7 +4,7 @@
       "staticOverrides": {
         "byObject": {
           "AmbientLight": {
-            "intensity": 0.11
+            "intensity": 0.01
           },
           "SpotLightSmall": {
             "position": {
@@ -230,11 +230,11 @@
           "PointLight6": {
             "position": {
               "x": -7.469881165800585,
-              "y": 3.1790122791748816,
+              "y": 4.723068138389921,
               "z": -13.435753722185579
             },
             "distance": 11.960000000000031,
-            "decay": 0.9999999999999984,
+            "decay": 1.1999999999999982,
             "intensity": 2.6900000000000035,
             "color": {
               "r": 0.9254901960784314,
@@ -345,12 +345,82 @@
               "z": 4.888153204647175
             },
             "decay": 0.3
+          },
+          "group": {
+            "position": {
+              "x": -1.7350817794664666,
+              "y": 1.6204492112842828,
+              "z": 0
+            },
+            "scale": {
+              "x": 0.4098317724465786,
+              "y": 0.610622514524135,
+              "z": 1
+            }
+          },
+          "unleash-the": {
+            "position": {
+              "x": -1.3257190536617265,
+              "y": 1.4078356416886495,
+              "z": 0.42456137765531954
+            },
+            "scale": {
+              "x": 0.172974601760805,
+              "y": 0.331939091838644,
+              "z": 1
+            },
+            "rotation": {
+              "x": 0,
+              "y": 0.4889669712498039,
+              "z": 0
+            }
+          },
+          "thrill": {
+            "position": {
+              "x": -1.699850244380157,
+              "y": 1.006368340864275,
+              "z": 0.558237773436605
+            },
+            "scale": {
+              "x": 0.2722983665153017,
+              "y": 0.40879884399771677,
+              "z": 0.8416779486032518
+            },
+            "rotation": {
+              "x": 0,
+              "y": 0.4683551580527924,
+              "z": 0
+            }
+          },
+          "floor": {
+            "scale": {
+              "x": 19.68493197586082,
+              "y": 17.776227014306297,
+              "z": 1
+            },
+            "position": {
+              "x": 0,
+              "y": 0.004321311625020696,
+              "z": 9.71445146547012e-17
+            }
+          },
+          "html": {
+            "scale": {
+              "x": 2.3306223078889787,
+              "y": 2.325144061400823,
+              "z": 1.4777487633636919
+            },
+            "position": {
+              "x": -0.09308658842453021,
+              "y": 1,
+              "z": 0.9495356682301117
+            }
           }
         }
       },
       "sequence": {
         "subUnitsPerUnit": 30,
-        "length": 14.03,
+        "length": 10.94,
         "type": "PositionalSequence",
         "tracksByObject": {
           "PerspectiveCamera": {
@@ -436,32 +506,6 @@
                     ],
                     "type": "bezier",
                     "value": -1.8279160468928894
-                  },
-                  {
-                    "id": "ORV9NMkWJS",
-                    "position": 12.267,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 1.073198315914992
-                  },
-                  {
-                    "id": "ngtiqpMM1D",
-                    "position": 14,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 0.31999999999997064
                   }
                 ]
               },
@@ -546,32 +590,6 @@
                     ],
                     "type": "bezier",
                     "value": 1.2666201941590207
-                  },
-                  {
-                    "id": "dc4poP_VKZ",
-                    "position": 12.267,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 0.7665793748176206
-                  },
-                  {
-                    "id": "XiFD43ji4G",
-                    "position": 14,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 0.5499999999999992
                   }
                 ]
               },
@@ -643,32 +661,6 @@
                     ],
                     "type": "bezier",
                     "value": 1.835141149966155
-                  },
-                  {
-                    "id": "vuFGME9WDL",
-                    "position": 12.267,
-                    "connectedRight": true,
-                    "handles": [
-                      0.8435404658401534,
-                      0.8866438561246844,
-                      0.27198154787942047,
-                      0.4561211167658048
-                    ],
-                    "type": "bezier",
-                    "value": 5.072705625096659
-                  },
-                  {
-                    "id": "A27f4Qu5tl",
-                    "position": 14,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 6.530000000000012
                   }
                 ]
               },
@@ -780,32 +772,6 @@
                     ],
                     "type": "bezier",
                     "value": 48.9541808088494
-                  },
-                  {
-                    "id": "Uru31lRrxI",
-                    "position": 12.167,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 45
-                  },
-                  {
-                    "id": "oW12QB9zJK",
-                    "position": 14,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 45
                   }
                 ]
               },
@@ -816,19 +782,6 @@
                   {
                     "id": "IP7BWT9CnC",
                     "position": -0.033,
-                    "connectedRight": true,
-                    "handles": [
-                      0.5,
-                      1,
-                      0.5,
-                      0
-                    ],
-                    "type": "bezier",
-                    "value": 1
-                  },
-                  {
-                    "id": "cEKtCIbJub",
-                    "position": 14,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -864,6 +817,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "h3ip4AMaHtOSc6oB",
     "sd0x8DWrdKPTe6V2",
     "Zqc1BfslE9v1v2q1",
     "kTeSnErBx4z5d3yC"

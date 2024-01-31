@@ -121,7 +121,7 @@ function calculateScreenPosition(object3D) {
   const x = (vector.x * widthHalf) + widthHalf;
   const y = -(vector.y * heightHalf) + heightHalf;
 
-  console.log(x,y);
+  // console.log(x,y);
 }
 
   
@@ -144,13 +144,14 @@ function calculateScreenPosition(object3D) {
   const cameraRef = useRef();
   const unleash_the = useRef();
   const thrill = useRef();
+  const porsche_911 = useRef();
+  const gt2rs = useRef();
   let makeInvisible = true;
   useFrame(()=>{
     // const sequenceLength = val(sheet.sequence.pointer.length);
     // sheet.sequence.position = scroll.offset*sequenceLength;
     cameraRef.current.lookAt(0, 0, 0);
     const currentTime = sheet.sequence.position;
-    console.log(scroll.offset)
     if(currentTime >= 0.60 && currentTime <= 0.70 && makeInvisible){
       makeInvisible=false;
       const t2 = gsap.timeline();
@@ -174,40 +175,90 @@ function calculateScreenPosition(object3D) {
 
   })
   const circle = document.querySelector('.circle');
+  var animationFraction = 0;
+  var animationStarted = false;
+  var animationTime = 0;  
+  var isDragging = false;
   useEffect(() => {
     const knob = document.querySelector('.knob');
-    let isDragging = false;
+    isDragging = false;
     const handleMouseDown = (event) => {
       isDragging = true;
-      knob.style.transition = 'none';
       event.preventDefault();
     };
     var constrainedAngle = 0;
-    const circleRect = circle.getBoundingClientRect();
-    const knobRect = knob.getBoundingClientRect();
-    const circleCenterX = circleRect.left + circleRect.width / 2;
-    const circleCenterY = circleRect.top + circleRect.height / 2;
-    const radius = circleRect.width / 2;
+    var knobRect = knob.getBoundingClientRect();    
+    var circleRect = circle.getBoundingClientRect();
+    var circleCenterX = circleRect.left + circleRect.width / 2;
+    var circleCenterY = circleRect.top + circleRect.height / 2;
+    var radius = circleRect.width / 2;
+    const opacity_factor = 4;
     const handleMouseMove = (event) => {
-      if (isDragging) {
+      if (isDragging && !animationStarted) {
+        circleRect = circle.getBoundingClientRect();
+        circleCenterX = circleRect.left + circleRect.width / 2;
+        circleCenterY = circleRect.top + circleRect.height / 2;
         const angle = Math.atan2(-event.clientY + circleCenterY, event.clientX - circleCenterX);
         constrainedAngle = 2*Math.PI - Math.max(0, Math.min(angle, Math.PI));
-        const newX = circleCenterX + Math.cos(constrainedAngle) * (circleRect.width / 2 -1);
-        const newY = circleCenterY + Math.sin(constrainedAngle) * (circleRect.height / 2 -1 );
-        knob.style.left = newX - knobRect.width /2 + 'px';
-        knob.style.top = newY - knobRect.height /2+ 'px';
         let fraction = (Math.PI*2 - constrainedAngle)/(Math.PI);
         const sequenceLength = val(sheet.sequence.pointer.length);
         sheet.sequence.position = fraction*sequenceLength/8;
+        circle.style.opacity = (1-opacity_factor*fraction);
+        const newX = circleCenterX + Math.cos(constrainedAngle) * (circleRect.width / 2 -1);
+        const newY = circleCenterY + Math.sin(constrainedAngle) * (circleRect.height / 2 -1 );
+        knob.style.left = newX - knobRect.width /2 + 'px';
+        knob.style.top = newY - knobRect.height /2 + 'px';
+        if(fraction>=0.25 && fraction<=0.35){
+           const temp_fraction = fraction - 0.25;
+           knob.style.opacity = 1 - temp_fraction*10; 
+          }
+        if(fraction>0.36){
+          knob.style.opacity = 0;
+          circle.style.opacity = 0;
+          animationFraction = fraction;
+          animationTime = sheet.sequence.position;
+          animationStarted = true;
+          animateScene();
+        }
         // scroll.offset = fraction;
         // console.log(sheet.sequence.position)
       }
     };
     const handleMouseUp = () => {
+      if(isDragging){
+        const temp_obj = {angle:constrainedAngle};
+        const targetAngle = Math.PI * 2;
+        if(animationStarted) return;
+        gsap.to(temp_obj, {
+          duration: 1,
+          angle: targetAngle,
+          ease: "bounce",
+          onUpdate: () => {
+            if(animationStarted)
+            {
+              gsap.killTweensOf(temp_obj);
+              return;
+            }
+            circleRect = circle.getBoundingClientRect();
+            circleCenterX = circleRect.left + circleRect.width / 2;
+            circleCenterY = circleRect.top + circleRect.height / 2;
+            const newX = circleCenterX + Math.cos(temp_obj.angle) * (circleRect.width / 2 -1);
+            const newY = circleCenterY + Math.sin(temp_obj.angle) * (circleRect.height / 2 -1 );
+            knob.style.left = newX - knobRect.width /2 + 'px';
+            knob.style.top = newY - knobRect.height /2+ 'px';
+            let fraction = (Math.PI*2 - temp_obj.angle)/(Math.PI);
+            const sequenceLength = val(sheet.sequence.pointer.length);
+            sheet.sequence.position = fraction*sequenceLength/8;
+            circle.style.opacity = (1-opacity_factor*fraction);
+            
+            if(fraction>=0.25 && fraction<=0.35){
+              const temp_fraction = fraction - 0.25;
+              knob.style.opacity = 1 - temp_fraction*10; 
+            }
+          }
+        });
+      }
       isDragging = false;
-      knob.style.transition = 'all 0.3s';
-      const temp_obj = {angle:constrainedAngle};
-      const targetAngle = Math.PI * 2;
     };
     knob.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
@@ -218,12 +269,50 @@ function calculateScreenPosition(object3D) {
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [circle]);
+  const sequenceLength = val(sheet.sequence.pointer.length);
+  var lastTextAnimationFlag = false;
+  function animateScene() {
+    sheet.sequence.position = animationTime;
+    console.log(animationTime)
+    if (animationTime <= sequenceLength) {
+      // animationFraction += 0.0001;
+      animationTime+= 0.02;
+      if(animationTime>11.5 &&  !lastTextAnimationFlag){
+        console.log("here")
+        lastTextAnimationFlag = true;
+        const t2 = gsap.timeline();
+        t2.to(porsche_911.current.material,{
+        duration: 0.4, opacity: 1, ease: "power2.inOut"
+        },0)
+        t2.to(gt2rs.current.material,{
+        duration: 0.4, opacity: 1, ease: "power2.inOut"
+        },0)
+        
+      }
+      requestAnimationFrame(animateScene);
+    }
+    else{
+      animateFooter();}
 
-
-
+  }
+  function animateFooter(){
+    const share = document.querySelector('.share');
+    const mouse = document.querySelector('.mouse');
+    console.log(mouse)
+    const timeline = gsap.timeline();
+    timeline.to(share,
+    {
+      left: 120,
+      duration: 1,
+      ease: "power2.inOut"
+    },0)
+    timeline.to(mouse,{
+      opacity: 1,duration: 0.5, ease: "power2.inOut"
+    },1)
+  }
     return (
       <>
-        {/* <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
+        <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
           <planeGeometry />
           <MeshReflectorMaterial
           blur={[10, 10]}
@@ -240,17 +329,29 @@ function calculateScreenPosition(object3D) {
           mirror={0}
           color="#ffffff"
           />
-        </e.mesh> */}
+        </e.mesh>
         <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text  ref={unleash_the}  font={"public/typeface/TrinosStencil.ttf"}>
+          <Text  ref={unleash_the}  font={"typeface/TrinosStencil.ttf"}>
             UNLEASH the
-            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
+            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
         <e.group theatreKey="thrill" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text  ref={thrill} font={"public/typeface/TrinosStencil.ttf"}>
+          <Text  ref={thrill} font={"typeface/TrinosStencil.ttf"}>
             THRILL
-            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
+            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
+          </Text>
+        </e.group>
+        <e.group theatreKey="Porsche-911" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text  ref={porsche_911} font={"typeface/911.ttf"}>
+            PORSCHE{'\n'}911
+            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
+          </Text>
+        </e.group>
+        <e.group theatreKey="GT2-RS" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text ref={gt2rs} font={"typeface/911.ttf"}>
+            GT2 RS
+            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
         <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={32} />

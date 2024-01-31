@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import { Canvas } from '@react-three/fiber';
 import Experience from './Experience.jsx';
 import * as THREE from 'three';
-import {ScrollControls} from '@react-three/drei';
+// import {ScrollControls} from '@react-three/drei';
 import {getProject} from '@theatre/core'
 import { SheetProvider} from '@theatre/r3f';
 import state1 from '../public/json/state1.json'
@@ -55,6 +55,13 @@ function App() {
           </svg>
         </div>
       </div>
+      <footer class="footer">
+        <div class="mouse">
+        </div>
+        <div class="share">
+          SHARE
+        </div>
+      </footer>
       <Canvas onCreated={state => {
         state.gl.toneMapping = THREE.ReinhardToneMapping }}
         shadows
@@ -62,11 +69,11 @@ function App() {
           preserveDrawingBuffer: true
         }}
         >
-          <ScrollControls damping={1} pages={2} maxSpeed={1}>
+          {/* <ScrollControls damping={1} pages={2} maxSpeed={1}> */}
             <SheetProvider sheet={demoSheet}>
               <Experience/>
             </SheetProvider>
-          </ScrollControls>
+          {/* </ScrollControls> */}
       </Canvas>
     </>
   )
