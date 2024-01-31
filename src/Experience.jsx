@@ -8,11 +8,12 @@ import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, S
 import * as THREE from 'three'
 import PropTypes from 'prop-types';
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
-import {getProject} from '@theatre/core'
+import {getProject,val} from '@theatre/core'
 import { editable as e, SheetProvider,PerspectiveCamera,useCurrentSheet,} from "@theatre/r3f";
+import {useScroll, Html} from '@react-three/drei';
 import state1 from '../public/json/state1.json'
 import './style.css'
-
+import {gsap} from 'gsap'
 
 const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
 
@@ -108,46 +109,147 @@ const pointLightConfig = {
   color: "#dbb788",
   scale: [5,5,5]
 }
+const camera = useThree().camera;
+function calculateScreenPosition(object3D) {
+  const vector = new THREE.Vector3();
+  const widthHalf = window.innerWidth / 2;
+  const heightHalf = window.innerHeight / 2;
+
+  object3D.updateMatrixWorld();
+  vector.setFromMatrixPosition(object3D.matrixWorld);
+  vector.project(camera);
+  const x = (vector.x * widthHalf) + widthHalf;
+  const y = -(vector.y * heightHalf) + heightHalf;
+
+  console.log(x,y);
+}
 
   
-  
-  const spotLightSmallRefs = Array.from({ length: 4 }, () => React.createRef());
-  useFrame(({ state, delta }) => {
-    spotLightSmallRefs.forEach((spotLightSmallRef, index) => {
-      if (spotLightSmallRef.current) {
-        const position = spotLightSmallRef.current.position;
-        position.y = 0;
-        spotLightSmallRef.current.target.position.copy(position);
-        spotLightSmallRef.current.target.updateMatrixWorld();
-      }
-    });
-  });
+  // const spotLightSmallRefs = Array.from({ length: 4 }, () => React.createRef());
+  // useFrame(({ state, delta }) => {
+  //   spotLightSmallRefs.forEach((spotLightSmallRef, index) => {
+  //     if (spotLightSmallRef.current) {
+  //       const position = spotLightSmallRef.current.position;
+  //       position.y = 0;
+  //       spotLightSmallRef.current.target.position.copy(position);
+  //       spotLightSmallRef.current.target.updateMatrixWorld();
+  //     }
+  //   });
+  // });
   const bias= -0.001;
+
+
+  const sheet = useCurrentSheet();
+  const scroll = useScroll();
+  const cameraRef = useRef();
+  const unleash_the = useRef();
+  const thrill = useRef();
+  let makeInvisible = true;
+  useFrame(()=>{
+    const sequenceLength = val(sheet.sequence.pointer.length);
+    sheet.sequence.position = scroll.offset*sequenceLength;
+    cameraRef.current.lookAt(0, 0, 0);
+    const currentTime = sheet.sequence.position;
+    console.log(scroll.offset)
+    if(currentTime >= 0.60 && currentTime <= 0.70 && makeInvisible){
+      makeInvisible=false;
+      const t2 = gsap.timeline();
+      t2.to(unleash_the.current.material,{
+      duration: 0.2, opacity: 0, ease: "power2.inOut"
+      },0)
+      t2.to(thrill.current.material,{
+      duration: 0.2, opacity: 0, ease: "power2.inOut"
+      },0)
+    }
+    if(currentTime<0.65) {
+      makeInvisible=true;
+      const t2=gsap.timeline();
+      t2.to(unleash_the.current.material,{
+      duration: 0.2, opacity: 1, ease: "power2.inOut"
+      },0)
+      t2.to(thrill.current.material,{
+      duration: 0.2, opacity: 1, ease: "power2.inOut"
+      },0)
+    }
+
+  })
+  const circle = document.querySelector('.circle');
+  useEffect(() => {
+    const knob = document.querySelector('.knob');
+    let isDragging = false;
+    const handleMouseDown = (event) => {
+      isDragging = true;
+      knob.style.transition = 'none';
+      event.preventDefault();
+    };
+    var constrainedAngle = 0;
+    const circleRect = circle.getBoundingClientRect();
+    const knobRect = knob.getBoundingClientRect();
+    const circleCenterX = circleRect.left + circleRect.width / 2;
+    const circleCenterY = circleRect.top + circleRect.height / 2;
+    const radius = circleRect.width / 2;
+    const handleMouseMove = (event) => {
+      if (isDragging) {
+        const angle = Math.atan2(-event.clientY + circleCenterY, event.clientX - circleCenterX);
+        constrainedAngle = 2*Math.PI - Math.max(0, Math.min(angle, Math.PI));
+        const newX = circleCenterX + Math.cos(constrainedAngle) * (circleRect.width / 2 -1);
+        const newY = circleCenterY + Math.sin(constrainedAngle) * (circleRect.height / 2 -1 );
+        knob.style.left = newX - knobRect.width /2 + 'px';
+        knob.style.top = newY - knobRect.height /2+ 'px';
+        let fraction = (Math.PI*2 - constrainedAngle)/(Math.PI);
+        const sequenceLength = val(sheet.sequence.pointer.length);
+        sheet.sequence.position = fraction*sequenceLength;
+        console.log(sheet.sequence.position)
+      }
+    };
+    const handleMouseUp = () => {
+      isDragging = false;
+      knob.style.transition = 'all 0.3s';
+      const temp_obj = {angle:constrainedAngle};
+      const targetAngle = Math.PI * 2;
+      console.log("mouseUp");
+      console.log(constrainedAngle, targetAngle)
+    };
+    knob.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      knob.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [circle]);
+
+
+
     return (
       <>
         <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
           <planeGeometry />
           <MeshReflectorMaterial
-          blur={[100, 100]}
-          resolution ={2048}
-          mixBlur={0}
-          mixStrength={10}
-          metalness={0.8 }
-          depthScale={10}
-          minDepthThreshold={0.9}
-          maxDepthThreshold={1}
+          blur={[10, 10]}
+          resolution ={1024}
+          mixBlur={1}
+          mixStrength={5}
+          mixContrast={1.3}
+          metalness={0.9}
+          depthScale={1}
+          minDepthThreshold={0}
+          maxDepthThreshold={0.5}
+          depthToBlurRatioBias={10}
           roughness={0}
+          mirror={0}
           color="#ffffff"
           />
         </e.mesh>
         <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text font={"public/typeface/TrinosStencil.ttf"}>
+          <Text  ref={unleash_the}  font={"public/typeface/TrinosStencil.ttf"}>
             UNLEASH the
             <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
         <e.group theatreKey="thrill" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text font={"public/typeface/TrinosStencil.ttf"}>
+          <Text  ref={thrill} font={"public/typeface/TrinosStencil.ttf"}>
             THRILL
             <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
           </Text>
@@ -164,8 +266,8 @@ const pointLightConfig = {
           shadow-mapSize-width={2048} 
           shadow-mapSize-height={2048} 
           shadow-filter={THREE.PCFSoftShadowMap}
-          shadow-camera-near={1} // Adjust near plane
-          shadow-camera-far={20} // Adjust far plane
+          shadow-camera-near={1}
+          shadow-camera-far={20} 
           fov={30}
         />
         <e.pointLight theatreKey="tubelight-enhance" castShadow={false}/>
@@ -180,12 +282,13 @@ const pointLightConfig = {
         <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight10" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-        {/* <e.group theatreKey="Model"> */}
-        <Model receiveShadow castShadow envMap={envMap}/>
+        <e.group theatreKey="Model">
+          <Model receiveShadow castShadow envMap={envMap}/>
+
+        </e.group>
         <BakeShadows />
         <AdaptiveDpr pixelated />
         <PerformanceMonitor />
-        {/* </e.group> */}
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
           <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
@@ -193,7 +296,7 @@ const pointLightConfig = {
           <Vignette eskil={false} offset={0} darkness={1.1} />
             <SMAA />
         </EffectComposer>
-        <PerspectiveCamera makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />
+        <PerspectiveCamera ref={cameraRef} makeDefault theatreKey='PerspectiveCamera' position={[2, 1, 2]} fov={40} />
       </>
     )
 }

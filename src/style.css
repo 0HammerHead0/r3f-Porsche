@@ -82,7 +82,7 @@
 
 #porsche-logo, .menu, .build-price, .current-offers{
     opacity: 0.6;
-    filter: blur(0.6px);
+    filter: blur(0.4px);
     transition: opacity 0.1s ease-in-out;
 }
 #porsche-logo:hover, .menu:hover, .build-price:hover, .current-offers:hover{
@@ -90,3 +90,49 @@
     opacity: 1;
 }
 
+.circleScroll{
+    --knob-dimension: 18px;
+    --circle-top: calc(50% - 350px);
+    --circle-left: calc(50% - 180px);
+
+}
+.circle{
+    z-index: 100;
+    position:fixed;
+    top: var(--circle-top);
+    left: var(--circle-left);
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+.knob{
+    width: var(--knob-dimension);
+    height: var(--knob-dimension);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 1px #000;
+    position: fixed;
+    z-index: 101;
+    top: calc(var(--circle-top) + 350px - var(--knob-dimension) / 2);
+    left: calc(var(--circle-left) + 700px - var(--knob-dimension) / 2);
+    pointer-events: visible;
+    opacity: 1;
+}
+
+/* .outer-circle{
+    height: 900px;
+    width: 900px;
+    border-radius: 50%;
+    position:fixed;
+    top: calc(50% - 450px);
+    left: calc(50% - 350px);
+    z-index: 100;
+    pointer-events: none;
+    
+    
+    
+    background: transparent;
+}
+.inner-circle { 
+    pointer-events: none;
+}  */
