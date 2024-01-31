@@ -146,8 +146,8 @@ function calculateScreenPosition(object3D) {
   const thrill = useRef();
   let makeInvisible = true;
   useFrame(()=>{
-    const sequenceLength = val(sheet.sequence.pointer.length);
-    sheet.sequence.position = scroll.offset*sequenceLength;
+    // const sequenceLength = val(sheet.sequence.pointer.length);
+    // sheet.sequence.position = scroll.offset*sequenceLength;
     cameraRef.current.lookAt(0, 0, 0);
     const currentTime = sheet.sequence.position;
     console.log(scroll.offset)
@@ -198,8 +198,9 @@ function calculateScreenPosition(object3D) {
         knob.style.top = newY - knobRect.height /2+ 'px';
         let fraction = (Math.PI*2 - constrainedAngle)/(Math.PI);
         const sequenceLength = val(sheet.sequence.pointer.length);
-        sheet.sequence.position = fraction*sequenceLength;
-        console.log(sheet.sequence.position)
+        sheet.sequence.position = fraction*sequenceLength/8;
+        // scroll.offset = fraction;
+        // console.log(sheet.sequence.position)
       }
     };
     const handleMouseUp = () => {
@@ -207,8 +208,6 @@ function calculateScreenPosition(object3D) {
       knob.style.transition = 'all 0.3s';
       const temp_obj = {angle:constrainedAngle};
       const targetAngle = Math.PI * 2;
-      console.log("mouseUp");
-      console.log(constrainedAngle, targetAngle)
     };
     knob.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
@@ -224,7 +223,7 @@ function calculateScreenPosition(object3D) {
 
     return (
       <>
-        <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
+        {/* <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
           <planeGeometry />
           <MeshReflectorMaterial
           blur={[10, 10]}
@@ -241,7 +240,7 @@ function calculateScreenPosition(object3D) {
           mirror={0}
           color="#ffffff"
           />
-        </e.mesh>
+        </e.mesh> */}
         <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
           <Text  ref={unleash_the}  font={"public/typeface/TrinosStencil.ttf"}>
             UNLEASH the
