@@ -278,14 +278,13 @@ function calculateScreenPosition(object3D) {
       // animationFraction += 0.0001;
       animationTime+= 0.02;
       if(animationTime>11.5 &&  !lastTextAnimationFlag){
-        console.log("here")
         lastTextAnimationFlag = true;
         const t2 = gsap.timeline();
         t2.to(porsche_911.current.material,{
-        duration: 0.4, opacity: 1, ease: "power2.inOut"
+        duration: 1, opacity: 1, ease: "power2.inOut"
         },0)
         t2.to(gt2rs.current.material,{
-        duration: 0.4, opacity: 1, ease: "power2.inOut"
+        duration: 1, opacity: 1, ease: "power2.inOut"
         },0)
         
       }
@@ -296,6 +295,9 @@ function calculateScreenPosition(object3D) {
 
   }
   function animateFooter(){
+    const centerText = document.querySelector('.centerText');
+    const readMore = document.querySelector('.readMore');
+    const centerTextObj = {left: 40, opacity: 0};
     const share = document.querySelector('.share');
     const mouse = document.querySelector('.mouse');
     console.log(mouse)
@@ -309,6 +311,20 @@ function calculateScreenPosition(object3D) {
     timeline.to(mouse,{
       opacity: 1,duration: 0.5, ease: "power2.inOut"
     },1)
+    timeline.to(centerTextObj,{
+     left:45,
+      opacity: 1,
+     duration: 1, ease: "power2.inOut",
+     onUpdate: () => {
+      centerText.style.left = centerTextObj.left + '%';
+      centerText.style.opacity = centerTextObj.opacity;
+     }
+    },0.2)
+    timeline.to(readMore,{
+      opacity: 1,
+      duration: 1, ease: "power2.inOut"
+    },0.2)
+
   }
     return (
       <>

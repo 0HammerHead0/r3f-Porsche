@@ -55,6 +55,12 @@ function App() {
           </svg>
         </div>
       </div>
+      <div class="centerText">
+        SCULPTED FOR <i>SPEED</i>,<br/>BORN TO <strong>DOMINATE</strong>.
+      </div>
+      <div class="readMore">
+      Porsche models are crafted for <br/>precision, performance, and elegance.<br/><br/><br/><a href="https://www.porsche.com/middle-east/_india_/"> READ MORE</a>
+      </div>
       <footer class="footer">
         <div class="mouse">
         </div>
