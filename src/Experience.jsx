@@ -151,6 +151,7 @@ function calculateScreenPosition(object3D) {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.repeat.set(2, 2);
+      texture.colorSpace =  THREE.SRGBColorSpace 
     });
     console.log(normal)
   },[normal,roughness,color, height, ao]);
@@ -313,6 +314,67 @@ function calculateScreenPosition(object3D) {
       animateFooter();}
 
   }
+  function resetAnimations(){
+    console.log(sheet.sequence.position)
+    if(sheet.sequence.position>1)
+    {
+      const t2 = gsap.timeline();
+      t2.to(porsche_911.current.material,{
+      duration: 1, opacity: 0, ease: "power2.inOut"
+      },0)
+      t2.to(gt2rs.current.material,{
+      duration: 1, opacity: 0, ease: "power2.inOut"
+      },0)
+      const t3 = gsap.timeline();
+      t3.to(unleash_the.current.material,{
+      duration: 0.2, opacity: 1, ease: "power2.inOut"
+      },0)
+      t3.to(thrill.current.material,{
+      duration: 0.2, opacity: 1, ease: "power2.inOut"
+      },0)
+      sheet.sequence.position = 0;
+      animationTime = 0;
+      animationFraction = 0;
+      animationStarted = false;
+      lastTextAnimationFlag = false;
+      const knob = document.querySelector('.knob');
+      const circle = document.querySelector('.circle');
+      knob.style.opacity = 1;
+      circle.style.opacity = 1;
+      const centerText = document.querySelector('.centerText');
+      const readMore = document.querySelector('.readMore');
+      const share = document.querySelector('.share');
+      const mouse = document.querySelector('.mouse');
+      const timeline = gsap.timeline();
+      const obj = {left: 45, opacity: 1};
+      timeline.to(share,
+      {
+        left: 0,
+        duration: 1,
+        ease: "power2.inOut"
+      },0)
+      timeline.to(mouse, {
+        opacity: 0,
+        duration: 0.5, ease: "power2.inOut"
+      },0.4)
+      timeline.to(obj,{
+        left:40,
+        opacity: 0,
+        duration: 1, ease: "power2.inOut",
+        onUpdate: () => {
+          centerText.style.left = obj.left + '%';
+          centerText.style.opacity = obj.opacity;
+        }
+        },0.2)
+      timeline.to(readMore,{
+        opacity: 0,
+        duration: 1, ease: "power2.inOut"
+      },0.2)
+    } 
+  }
+  const reset = document.querySelector('.reset');
+  reset.addEventListener('click',resetAnimations);
+
   function animateFooter(){
     const centerText = document.querySelector('.centerText');
     const readMore = document.querySelector('.readMore');
@@ -365,7 +427,7 @@ function calculateScreenPosition(object3D) {
             minDepthThreshold={0}
             maxDepthThreshold={0.5}
             depthToBlurRatioBias={10}
-            roughness={0}
+            roughness={1}
             mirror={0}
           />
         </e.mesh>
@@ -430,7 +492,7 @@ function calculateScreenPosition(object3D) {
         <PerformanceMonitor />
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-          <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
+          <Bloom luminanceThreshold={0} luminanceSmoothing={10} height={300} />
           {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
           <Vignette eskil={false} offset={0} darkness={1.1} />
             <SMAA />
