@@ -1,16 +1,17 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
-import React, {useRef, useState,useEffect } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
+import React, {useRef, useState,useEffect} from 'react';
+import { useFrame, useThree ,useLoader } from '@react-three/fiber';
 import CustomObject from './CustomObject'
-import { OrbitControls, useGLTF, Text , Environment,SpotLight, AdaptiveDpr, BakeShadows,PerformanceMonitor ,MeshReflectorMaterial } from '@react-three/drei';
+import { OrbitControls, useGLTF, Text , Environment,SpotLight, AdaptiveDpr, BakeShadows,PerformanceMonitor ,MeshReflectorMaterial} from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, SMAA,GodRays, FXAA,Sepia, SelectiveBloom, ShockWave, HueSaturation, Scanline , Autofocus, LensFlare} from '@react-three/postprocessing';
 import * as THREE from 'three'
 import PropTypes from 'prop-types';
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {getProject,val} from '@theatre/core'
 import { editable as e, SheetProvider,PerspectiveCamera,useCurrentSheet,} from "@theatre/r3f";
-import {useScroll, Html} from '@react-three/drei';
+import {TextureLoader} from 'three';
+import {useScroll, useTexture, Html} from '@react-three/drei';
 import state1 from '../public/json/state1.json'
 import './style.css'
 import {gsap} from 'gsap'
@@ -136,6 +137,27 @@ function calculateScreenPosition(object3D) {
   //     }
   //   });
   // });
+  const [roughness, normal, color, height, ao, opacity] = useLoader(TextureLoader, [
+    "textures/concrete-roughness.jpg",
+    "textures/concrete-normal.png",
+    "textures/concrete-color.jpg",
+    "textures/concrete-height.png",
+    "textures/concrete-ao.jpg",
+    "textures/concrete-opacity.jpg"
+  ])
+
+  useEffect(() =>{
+    [normal,roughness,color, height, ao].forEach((texture) => {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(2, 2);
+    });
+    console.log(normal)
+  },[normal,roughness,color, height, ao]);
+
+
+
+
   const bias= -0.001;
 
 
@@ -148,8 +170,6 @@ function calculateScreenPosition(object3D) {
   const gt2rs = useRef();
   let makeInvisible = true;
   useFrame(()=>{
-    // const sequenceLength = val(sheet.sequence.pointer.length);
-    // sheet.sequence.position = scroll.offset*sequenceLength;
     cameraRef.current.lookAt(0, 0, 0);
     const currentTime = sheet.sequence.position;
     if(currentTime >= 0.60 && currentTime <= 0.70 && makeInvisible){
@@ -275,7 +295,6 @@ function calculateScreenPosition(object3D) {
     sheet.sequence.position = animationTime;
     console.log(animationTime)
     if (animationTime <= sequenceLength) {
-      // animationFraction += 0.0001;
       animationTime+= 0.02;
       if(animationTime>11.5 &&  !lastTextAnimationFlag){
         lastTextAnimationFlag = true;
@@ -300,7 +319,6 @@ function calculateScreenPosition(object3D) {
     const centerTextObj = {left: 40, opacity: 0};
     const share = document.querySelector('.share');
     const mouse = document.querySelector('.mouse');
-    console.log(mouse)
     const timeline = gsap.timeline();
     timeline.to(share,
     {
@@ -310,7 +328,7 @@ function calculateScreenPosition(object3D) {
     },0)
     timeline.to(mouse,{
       opacity: 1,duration: 0.5, ease: "power2.inOut"
-    },1)
+    },0.4)
     timeline.to(centerTextObj,{
      left:45,
       opacity: 1,
@@ -331,19 +349,24 @@ function calculateScreenPosition(object3D) {
         <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
           <planeGeometry />
           <MeshReflectorMaterial
-          blur={[10, 10]}
-          resolution ={1024}
-          mixBlur={1}
-          mixStrength={5}
-          mixContrast={1.3}
-          metalness={0.9}
-          depthScale={1}
-          minDepthThreshold={0}
-          maxDepthThreshold={0.5}
-          depthToBlurRatioBias={10}
-          roughness={0}
-          mirror={0}
-          color="#ffffff"
+            roughnessMap = {roughness}
+            normalMap = {normal}
+            map = {color}
+            aoMap = {ao}
+            displacementMap = {height}
+            alphaMap = {opacity}
+            blur={[10, 10]}
+            resolution ={1024}
+            mixBlur={1}
+            mixStrength={5}
+            mixContrast={1.3}
+            metalness={0.9}
+            depthScale={1}
+            minDepthThreshold={0}
+            maxDepthThreshold={0.5}
+            depthToBlurRatioBias={10}
+            roughness={0}
+            mirror={0}
           />
         </e.mesh>
         <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
@@ -361,13 +384,13 @@ function calculateScreenPosition(object3D) {
         <e.group theatreKey="Porsche-911" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
           <Text  ref={porsche_911} font={"typeface/911.ttf"}>
             PORSCHE{'\n'}911
-            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
+            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.75} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
         <e.group theatreKey="GT2-RS" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
           <Text ref={gt2rs} font={"typeface/911.ttf"}>
             GT2 RS
-            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
+            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.75} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
         <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={32} />

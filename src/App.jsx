@@ -36,7 +36,7 @@ function App() {
         <div class="knob">
         </div>
         <div class="circle">
-          <svg width="700" height="700" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
+          {/* <svg width="700" height="700" viewBox="0 0 700 700" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M700 350C700 543.3 543.3 700 350 700C156.7 700 0 543.3 0 350H3C3 541.643 158.357 697 350 697C541.643 697 697 541.643 697 350H700Z" fill="url(#paint0_linear_79_39)"/>
           <path fill-rule="evenodd" clip-rule="evenodd" d="M700 350H697C697 158.357 541.642 3 350 3C188.162 3 52.2003 113.792 13.8247 263.667H10.728C49.1745 112.118 186.494 0 350 0C543.299 0 700 156.7 700 350Z" fill="url(#paint1_linear_79_39)"/>
           <defs>
@@ -52,7 +52,7 @@ function App() {
           <stop offset="1" stop-color="white" stop-opacity="0.96"/>
           </linearGradient>
           </defs>
-          </svg>
+          </svg> */}
         </div>
       </div>
       <div class="centerText">
