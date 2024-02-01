@@ -446,11 +446,11 @@ export default function Experience() {
         </e.group>
         <e.group theatreKey="GT2-RS" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
           <Text ref={gt2rs} font={"typeface/911.ttf"}>
-            GT2 RS
+            GT3 R
             <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.75} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
-        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={25} />
+        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={30} />
         <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
         <e.spotLight theatreKey="SpotLight"
           castShadow 
@@ -481,7 +481,7 @@ export default function Experience() {
         <PerformanceMonitor />
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-          <Bloom luminanceThreshold={0} luminanceSmoothing={10} height={300} />
+          {/* <Bloom luminanceThreshold={0} luminanceSmoothing={10} height={300} /> */}
           {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
           <Vignette eskil={false} offset={0} darkness={1.1} />
             <SMAA />
