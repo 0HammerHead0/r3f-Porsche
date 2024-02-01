@@ -7,7 +7,7 @@ import * as THREE from 'three';
 import {getProject} from '@theatre/core'
 import { SheetProvider} from '@theatre/r3f';
 import statefinal from '../public/json/state-final.json'
-
+import './style.css'
 const demoSheet = getProject('Demo Project',{state:statefinal}).sheet('Demo Sheet')
 
 function App() {
