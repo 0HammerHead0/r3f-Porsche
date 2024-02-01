@@ -4,7 +4,9 @@
     --header-color: rgba(0, 0, 0, 0.375);
     --header-border-color: #faf9f698;
 }
-
+body{
+    user-select: none;
+}
 .header {
     position: fixed;
     top: 20px;
@@ -20,7 +22,6 @@
     align-items: center;
     flex-direction: row;
     backdrop-filter: blur(3px);
-
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
     font-weight: 600 ;
@@ -84,6 +85,7 @@
     opacity: 0.6;
     filter: blur(0.4px);
     transition: opacity 0.1s ease-in-out;
+    text-shadow: 0px 0px 100px #000;
 }
 #porsche-logo:hover, .menu:hover, .build-price:hover, .current-offers:hover{
     filter: blur(0px);
@@ -91,48 +93,127 @@
 }
 
 .circleScroll{
-    --knob-dimension: 18px;
-    --circle-top: calc(50% - 350px);
-    --circle-left: calc(50% - 180px);
-
+    --knob-dimension: max(14px , 1.5vh);
+    --circle-side: 65vh;
+    --circle-top: calc(50% - var(--circle-side) / 2);
+    --circle-left: calc(65% - var(--circle-side) / 2);
 }
 .circle{
     z-index: 100;
     position:fixed;
+    height: var(--circle-side);
+    width: var(--circle-side);
     top: var(--circle-top);
     left: var(--circle-left);
+    background-image: url(../public/circle.png);
+    background-size: cover;
     pointer-events: none;
     opacity: 0.6;
 }
+.knob:hover{
+    opacity:1;
+}
+.footer{
+    z-index: 100;
+    width: 100vw;
+    height: 100px;
+    bottom: 0;
+    position: fixed;
+    color:white;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    font-family: "Raleway", sans-serif;
+    font-weight: 600 ;
+    font-size: 20px;
+    text-shadow: 0px 0px 10px #000;
+}
+.reset{
+    margin-right: 50px;
+    opacity: 0.6;
+    filter: blur(0.4px);
+    transition: opacity 0.1s ease-in-out;
+    cursor: pointer;
+}
+.reset:hover{
+    filter: blur(0px);
+    opacity: 1;
+}
+.share{
+    position: absolute;
+    opacity:0.6;
+    left: 40px;
+    cursor:default;
+}
+.share:hover{
+    opacity:1;
 
+}
+.mouse{
+    background-image: url(../public/mouse.png);
+    height: 50px;
+    width: 50px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    margin-left: 40px;
+    opacity: 0;
+}
 .knob{
     width: var(--knob-dimension);
     height: var(--knob-dimension);
     border-radius: 50%;
     background: #fff;
     box-shadow: 0 0 10px 1px #000;
-    position: fixed;
     z-index: 101;
-    top: calc(var(--circle-top) + 350px - var(--knob-dimension) / 2);
-    left: calc(var(--circle-left) + 700px - var(--knob-dimension) / 2);
+    top: calc(var(--circle-top) + var(--circle-side)/2 - var(--knob-dimension) / 2);
+    left: calc(var(--circle-left) + var(--circle-side) - var(--knob-dimension) / 2);
     pointer-events: visible;
     opacity: 1;
+    opacity: 0.8;
+    position: fixed;
 }
 
-/* .outer-circle{
-    height: 900px;
-    width: 900px;
-    border-radius: 50%;
+.centerText{
     position:fixed;
-    top: calc(50% - 450px);
-    left: calc(50% - 350px);
-    z-index: 100;
-    pointer-events: none;
-    
-    
-    
-    background: transparent;
+    z-index:100;
+    color:rgb(211, 211, 211);
+    font-family: "Raleway", sans-serif;
+    font-weight: 400 ;
+    font-size: 6vh;
+    text-shadow: 0px 0px 50px 1px #000000;
+    top: 60%;
+    left: 40%;
+    cursor: default;
+    word-spacing: 0.2vw; 
+    line-height: 7vh;
+    opacity:0;
 }
-.inner-circle { 
-    pointer-events: none;
-}  */
+
+.readMore{
+    position:fixed;
+    z-index:100;
+    color:rgba(255, 255, 255, 0.542);
+    font-family: "Raleway", sans-serif;
+    font-size: 1.3vh;
+    text-shadow: 0px 0px 100px 0px #000000;
+    top: 80%;
+    left: 85%;
+    cursor: default;
+    opacity:0;
+    line-height: 1.5vh;
+    word-spacing: 0.1vw;
+    text-decoration: none;
+    filter: blur(0.6px);
+
+}
+.readMore:hover{
+    filter: blur(0px);
+}
+.readMore a{
+    color:rgba(255, 255, 255, 0.542);
+    text-decoration: none;
+}
+.readMore a:hover{
+    color:rgba(255, 255, 255, 0.842);
+}

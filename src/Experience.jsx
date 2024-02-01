@@ -1,26 +1,26 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/no-unknown-property */
-import React, {useRef, useState,useEffect } from 'react';
-import { useFrame, useThree } from '@react-three/fiber';
-import CustomObject from './CustomObject'
-import { OrbitControls, useGLTF, Text , Environment,SpotLight, AdaptiveDpr, BakeShadows,PerformanceMonitor ,MeshReflectorMaterial } from '@react-three/drei';
+import React, {useRef, useState,useEffect} from 'react';
+import { useFrame, useThree ,useLoader } from '@react-three/fiber';
+import { OrbitControls, useGLTF, Text , Environment,SpotLight, AdaptiveDpr, BakeShadows,PerformanceMonitor ,MeshReflectorMaterial} from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, SMAA,GodRays, FXAA,Sepia, SelectiveBloom, ShockWave, HueSaturation, Scanline , Autofocus, LensFlare} from '@react-three/postprocessing';
 import * as THREE from 'three'
 import PropTypes from 'prop-types';
 import {RGBELoader} from 'three/examples/jsm/loaders/RGBELoader.js'
 import {getProject,val} from '@theatre/core'
 import { editable as e, SheetProvider,PerspectiveCamera,useCurrentSheet,} from "@theatre/r3f";
-import {useScroll, Html} from '@react-three/drei';
-import state1 from '../public/json/state1.json'
+import {TextureLoader} from 'three';
+import {useScroll, useTexture, Html} from '@react-three/drei';
+import statefinal from '../public/json/state-final.json'
 import './style.css'
 import {gsap} from 'gsap'
 
-const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
+const demoSheet = getProject('Demo Project',{state:statefinal}).sheet('Demo Sheet')
 
 
 
 function Model({envMap}) {
-  const gltf = useGLTF('models/final1.glb');
+  const gltf = useGLTF('models/compressed.glb');
   const model = gltf.scene;
   model.traverse((child) => {
     if (child.isMesh) {
@@ -120,22 +120,28 @@ function calculateScreenPosition(object3D) {
   vector.project(camera);
   const x = (vector.x * widthHalf) + widthHalf;
   const y = -(vector.y * heightHalf) + heightHalf;
-
-  console.log(x,y);
 }
+  const [roughness, normal, color, height, ao, opacity] = useLoader(TextureLoader, [
+    "textures/concrete-roughness.jpg",
+    "textures/concrete-normal.png",
+    "textures/concrete-color.jpg",
+    "textures/concrete-height.png",
+    "textures/concrete-ao.jpg",
+    "textures/concrete-opacity.jpg"
+  ])
 
-  
-  // const spotLightSmallRefs = Array.from({ length: 4 }, () => React.createRef());
-  // useFrame(({ state, delta }) => {
-  //   spotLightSmallRefs.forEach((spotLightSmallRef, index) => {
-  //     if (spotLightSmallRef.current) {
-  //       const position = spotLightSmallRef.current.position;
-  //       position.y = 0;
-  //       spotLightSmallRef.current.target.position.copy(position);
-  //       spotLightSmallRef.current.target.updateMatrixWorld();
-  //     }
-  //   });
-  // });
+  useEffect(() =>{
+    [normal,roughness,color, height, ao].forEach((texture) => {
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(4, 4);
+      texture.colorSpace =  THREE.SRGBColorSpace 
+    });
+  },[normal,roughness,color, height, ao]);
+
+
+
+
   const bias= -0.001;
 
 
@@ -144,13 +150,12 @@ function calculateScreenPosition(object3D) {
   const cameraRef = useRef();
   const unleash_the = useRef();
   const thrill = useRef();
+  const porsche_911 = useRef();
+  const gt2rs = useRef();
   let makeInvisible = true;
   useFrame(()=>{
-    // const sequenceLength = val(sheet.sequence.pointer.length);
-    // sheet.sequence.position = scroll.offset*sequenceLength;
     cameraRef.current.lookAt(0, 0, 0);
     const currentTime = sheet.sequence.position;
-    console.log(scroll.offset)
     if(currentTime >= 0.60 && currentTime <= 0.70 && makeInvisible){
       makeInvisible=false;
       const t2 = gsap.timeline();
@@ -174,40 +179,94 @@ function calculateScreenPosition(object3D) {
 
   })
   const circle = document.querySelector('.circle');
+  var animationFraction = 0;
+  var animationStarted = false;
+  var animationTime = 0;  
+  var isDragging = false;
   useEffect(() => {
     const knob = document.querySelector('.knob');
-    let isDragging = false;
+    isDragging = false;
     const handleMouseDown = (event) => {
       isDragging = true;
-      knob.style.transition = 'none';
       event.preventDefault();
     };
     var constrainedAngle = 0;
-    const circleRect = circle.getBoundingClientRect();
-    const knobRect = knob.getBoundingClientRect();
-    const circleCenterX = circleRect.left + circleRect.width / 2;
-    const circleCenterY = circleRect.top + circleRect.height / 2;
-    const radius = circleRect.width / 2;
+    var knobRect = knob.getBoundingClientRect();    
+    var circleRect = circle.getBoundingClientRect();
+    var circleCenterX = circleRect.left + circleRect.width / 2;
+    var circleCenterY = circleRect.top + circleRect.height / 2;
+    var radius = circleRect.width / 2;
+    const opacity_factor = 4;
     const handleMouseMove = (event) => {
-      if (isDragging) {
+      if (isDragging && !animationStarted) {
+        circleRect = circle.getBoundingClientRect();
+        circleCenterX = circleRect.left + circleRect.width / 2;
+        circleCenterY = circleRect.top + circleRect.height / 2;
         const angle = Math.atan2(-event.clientY + circleCenterY, event.clientX - circleCenterX);
         constrainedAngle = 2*Math.PI - Math.max(0, Math.min(angle, Math.PI));
-        const newX = circleCenterX + Math.cos(constrainedAngle) * (circleRect.width / 2 -1);
-        const newY = circleCenterY + Math.sin(constrainedAngle) * (circleRect.height / 2 -1 );
-        knob.style.left = newX - knobRect.width /2 + 'px';
-        knob.style.top = newY - knobRect.height /2+ 'px';
         let fraction = (Math.PI*2 - constrainedAngle)/(Math.PI);
         const sequenceLength = val(sheet.sequence.pointer.length);
         sheet.sequence.position = fraction*sequenceLength/8;
-        // scroll.offset = fraction;
-        // console.log(sheet.sequence.position)
+        circle.style.opacity = (1-opacity_factor*fraction);
+        const newX = circleCenterX + Math.cos(constrainedAngle) * (circleRect.width / 2 -1);
+        const newY = circleCenterY + Math.sin(constrainedAngle) * (circleRect.height / 2 -1 );
+        knob.style.left = newX - knobRect.width /2 + 'px';
+        knob.style.top = newY - knobRect.height /2 + 'px';
+        if(fraction>=0.25 && fraction<=0.35){
+           const temp_fraction = fraction - 0.25;
+           knob.style.opacity = 1 - temp_fraction*10; 
+          }
+        if(fraction>0.36){
+          knob.style.opacity = 0;
+          circle.style.opacity = 0;
+          animationFraction = fraction;
+          animationTime = sheet.sequence.position;
+          animationStarted = true;
+          const reset = document.querySelector('.reset');
+          gsap.to(reset,{
+            opacity: 0,
+            duration: 1, ease: "power2.inOut"
+          },0)
+
+          animateScene();
+        }
       }
     };
     const handleMouseUp = () => {
+      if(isDragging){
+        const temp_obj = {angle:constrainedAngle};
+        const targetAngle = Math.PI * 2;
+        if(animationStarted) return;
+        gsap.to(temp_obj, {
+          duration: 1,
+          angle: targetAngle,
+          ease: "bounce",
+          onUpdate: () => {
+            if(animationStarted)
+            {
+              gsap.killTweensOf(temp_obj);
+              return;
+            }
+            circleRect = circle.getBoundingClientRect();
+            circleCenterX = circleRect.left + circleRect.width / 2;
+            circleCenterY = circleRect.top + circleRect.height / 2;
+            const newX = circleCenterX + Math.cos(temp_obj.angle) * (circleRect.width / 2 -1);
+            const newY = circleCenterY + Math.sin(temp_obj.angle) * (circleRect.height / 2 -1 );
+            knob.style.left = newX - knobRect.width /2 + 'px';
+            knob.style.top = newY - knobRect.height /2+ 'px';
+            let fraction = (Math.PI*2 - temp_obj.angle)/(Math.PI);
+            const sequenceLength = val(sheet.sequence.pointer.length);
+            sheet.sequence.position = fraction*sequenceLength/8;
+            circle.style.opacity = (1-opacity_factor*fraction);
+            
+            if(fraction>=0.25 && fraction<=0.35){
+              const temp_fraction = fraction - 0.25;
+              knob.style.opacity = 1 - temp_fraction*10; 
+            }
+          }
+        });
+      }
       isDragging = false;
-      knob.style.transition = 'all 0.3s';
-      const temp_obj = {angle:constrainedAngle};
-      const targetAngle = Math.PI * 2;
     };
     knob.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
@@ -218,42 +277,191 @@ function calculateScreenPosition(object3D) {
       window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [circle]);
+  const sequenceLength = val(sheet.sequence.pointer.length);
+  var lastTextAnimationFlag = false;
+  function animateScene() {
+    sheet.sequence.position = animationTime;
+    if (animationTime <= sequenceLength) {
+      animationTime+= 0.02;
+      if(animationTime>11.5 &&  !lastTextAnimationFlag){
+        lastTextAnimationFlag = true;
+        const t2 = gsap.timeline();
+        t2.to(porsche_911.current.material,{
+        duration: 1, opacity: 1, ease: "power2.inOut"
+        },0)
+        t2.to(gt2rs.current.material,{
+        duration: 1, opacity: 1, ease: "power2.inOut"
+        },0)
+        
+      }
+      requestAnimationFrame(animateScene);
+    }
+    else{
+      const reset = document.querySelector('.reset');
+      gsap.to(reset,{
+        opacity: 1,
+        duration: 1, ease: "power2.inOut"
+      },0)
+      animateFooter();
+    }
 
+  }
+  function resetAnimations(){
+    if(sheet.sequence.position>0)
+    {
+      const t2 = gsap.timeline();
+      t2.to(porsche_911.current.material,{
+      duration: 1, opacity: 0, ease: "power2.inOut"
+      },0)
+      t2.to(gt2rs.current.material,{
+      duration: 1, opacity: 0, ease: "power2.inOut"
+      },0)
+      const t3 = gsap.timeline();
+      t3.to(unleash_the.current.material,{
+      duration: 0.2, opacity: 1, ease: "power2.inOut"
+      },0)
+      t3.to(thrill.current.material,{
+      duration: 0.2, opacity: 1, ease: "power2.inOut"
+      },0)
+      sheet.sequence.position = 0;
+      animationTime = 0;
+      animationFraction = 0;
+      animationStarted = false;
+      lastTextAnimationFlag = false;
+      const knob = document.querySelector('.knob');
+      const circle = document.querySelector('.circle');
+      const centerText = document.querySelector('.centerText');
+      const readMore = document.querySelector('.readMore');
+      const share = document.querySelector('.share');
+      const mouse = document.querySelector('.mouse');
+      const timeline = gsap.timeline();
+      const obj = {left: 45, opacity: 1};
+      timeline.to(share,
+      {
+        left: 40,
+        duration: 1,
+        ease: "power2.inOut"
+      },0)
+      timeline.to(mouse, {
+        opacity: 0,
+        duration: 0.5, ease: "power2.inOut"
+      },0.4)
+      timeline.to(obj,{
+        left:40,
+        opacity: 0,
+        duration: 1, ease: "power2.inOut",
+        onUpdate: () => {
+          centerText.style.left = obj.left + '%';
+          centerText.style.opacity = obj.opacity;
+        }
+        },0.2)
+      timeline.to(readMore,{
+        opacity: 0,
+        duration: 1, ease: "power2.inOut"
+      },0.2)
+      timeline.to(knob,{
+        opacity: 1,
+        duration: 1, ease: "power2.inOut"
+      },0.5)
+      timeline.to(circle,{
+        opacity: 1,
+        duration: 1, ease: "power2.inOut"
+      },0.5)
+      const circleRect = circle.getBoundingClientRect();
+      const knobRect = knob.getBoundingClientRect();
+      const circleCenterX = circleRect.left + circleRect.width / 2;
+      const circleCenterY = circleRect.top + circleRect.height / 2;
+      const newX = circleCenterX + Math.cos(Math.PI*2) * (circleRect.width / 2 -1);
+      const newY = circleCenterY + Math.sin(Math.PI*2) * (circleRect.height / 2 -1 );
+      knob.style.left = newX - knobRect.width /2 + 'px';
+      knob.style.top = newY - knobRect.height /2+ 'px';
+    }
 
+  }
+  const reset = document.querySelector('.reset');
+  reset.addEventListener('click',resetAnimations);
 
+  function animateFooter(){
+    const centerText = document.querySelector('.centerText');
+    const readMore = document.querySelector('.readMore');
+    const centerTextObj = {left: 40, opacity: 0};
+    const share = document.querySelector('.share');
+    const mouse = document.querySelector('.mouse');
+    const timeline = gsap.timeline();
+    timeline.to(share,
+    {
+      left: 120,
+      duration: 1,
+      ease: "power2.inOut"
+    },0)
+    timeline.to(mouse,{
+      opacity: 1,duration: 0.5, ease: "power2.inOut"
+    },0.4)
+    timeline.to(centerTextObj,{
+     left:45,
+      opacity: 1,
+     duration: 1, ease: "power2.inOut",
+     onUpdate: () => {
+      centerText.style.left = centerTextObj.left + '%';
+      centerText.style.opacity = centerTextObj.opacity;
+     }
+    },0.2)
+    timeline.to(readMore,{
+      opacity: 1,
+      duration: 1, ease: "power2.inOut"
+    },0.2)
+
+  }
     return (
       <>
-        {/* <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
-          <planeGeometry />
+        <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
+          <planeGeometry args={[2,2]}/>
           <MeshReflectorMaterial
-          blur={[10, 10]}
-          resolution ={1024}
-          mixBlur={1}
-          mixStrength={5}
-          mixContrast={1.3}
-          metalness={0.9}
-          depthScale={1}
-          minDepthThreshold={0}
-          maxDepthThreshold={0.5}
-          depthToBlurRatioBias={10}
-          roughness={0}
-          mirror={0}
-          color="#ffffff"
+            roughnessMap = {roughness}
+            normalMap = {normal}
+            map = {color}
+            aoMap = {ao}
+            displacementMap = {height}
+            alphaMap = {opacity}
+            blur={[10, 10]}
+            resolution ={1024}
+            mixBlur={1}
+            mixStrength={5}
+            mixContrast={1.3}
+            metalness={0.9}
+            depthScale={1}
+            minDepthThreshold={0}
+            maxDepthThreshold={0.5}
+            depthToBlurRatioBias={10}
+            roughness={1}
+            mirror={0}
           />
-        </e.mesh> */}
+        </e.mesh>
         <e.group theatreKey="unleash-the" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text  ref={unleash_the}  font={"public/typeface/TrinosStencil.ttf"}>
+          <Text  ref={unleash_the}  font={"typeface/TrinosStencil.ttf"}>
             UNLEASH the
-            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
+            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
         <e.group theatreKey="thrill" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
-          <Text  ref={thrill} font={"public/typeface/TrinosStencil.ttf"}>
+          <Text  ref={thrill} font={"typeface/TrinosStencil.ttf"}>
             THRILL
-            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={2} side={THREE.DoubleSide}/>
+            <meshStandardMaterial attach="material" color="white" emissive="white" emissiveIntensity={1.5} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
-        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={32} />
+        <e.group theatreKey="Porsche-911" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text  ref={porsche_911} font={"typeface/911.ttf"}>
+            PORSCHE{'\n'}911
+            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.75} side={THREE.DoubleSide}/>
+          </Text>
+        </e.group>
+        <e.group theatreKey="GT2-RS" position={[0,0,0]} rotation={[0,0,0]} scale={[1,1,1]}>
+          <Text ref={gt2rs} font={"typeface/911.ttf"}>
+            GT2 RS
+            <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.75} side={THREE.DoubleSide}/>
+          </Text>
+        </e.group>
+        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={25} />
         <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
         <e.spotLight theatreKey="SpotLight"
           castShadow 
@@ -270,13 +478,8 @@ function calculateScreenPosition(object3D) {
           fov={30}
         />
         <e.pointLight theatreKey="tubelight-enhance" castShadow={false}/>
-        {/* <e.pointLight theatreKey="PointLight" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
-        {/* <e.pointLight theatreKey="PointLight1" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight2" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-        {/* <e.pointLight theatreKey="PointLight3" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight4" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-        {/* <e.pointLight theatreKey="PointLight5" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
-        {/* <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight7" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
@@ -290,7 +493,7 @@ function calculateScreenPosition(object3D) {
         <PerformanceMonitor />
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-          <Bloom luminanceThreshold={0} luminanceSmoothing={30} height={300} />
+          <Bloom luminanceThreshold={0} luminanceSmoothing={10} height={300} />
           {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
           <Vignette eskil={false} offset={0} darkness={1.1} />
             <SMAA />
