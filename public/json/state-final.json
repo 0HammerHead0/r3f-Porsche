@@ -414,8 +414,8 @@
             },
             "position": {
               "x": 0,
-              "y": 0.004321311625020696,
-              "z": 9.71445146547012e-17
+              "y": 0.014275106526459233,
+              "z": 9.8879238130678e-17
             }
           },
           "html": {
@@ -468,7 +468,7 @@
       },
       "sequence": {
         "subUnitsPerUnit": 30,
-        "length": 12.86,
+        "length": 12.99,
         "type": "PositionalSequence",
         "tracksByObject": {
           "PerspectiveCamera": {
@@ -583,7 +583,7 @@
                   },
                   {
                     "id": "VMhtZvskq5",
-                    "position": 12.8,
+                    "position": 12.867,
                     "connectedRight": true,
                     "handles": [
                       0.5,
@@ -719,11 +719,11 @@
                   },
                   {
                     "id": "BtO2kKCGq8",
-                    "position": 12.833,
+                    "position": 12.867,
                     "connectedRight": true,
                     "handles": [
-                      0.6845020958863146,
-                      0.9173771568473997,
+                      0.554092714757074,
+                      1.005102518399141,
                       0.5,
                       0
                     ],
@@ -829,16 +829,16 @@
                   },
                   {
                     "id": "MZ2KhdBput",
-                    "position": 12.8,
+                    "position": 12.867,
                     "connectedRight": true,
                     "handles": [
-                      0.6221791001868622,
-                      1.074247161275644,
+                      0.4645141584016099,
+                      1.0293602302751395,
                       0.5,
                       0
                     ],
                     "type": "bezier",
-                    "value": -0.34249858381098
+                    "value": -0.37248161951666553
                   }
                 ]
               },
@@ -995,6 +995,7 @@
   },
   "definitionVersion": "0.4.0",
   "revisionHistory": [
+    "QlwVlR947jmLRz9G",
     "3VrRnZH7LTxM3UvS",
     "R_TrmdlJQECfaIPf",
     "h3ip4AMaHtOSc6oB",

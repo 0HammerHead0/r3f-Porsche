@@ -2,7 +2,6 @@
 /* eslint-disable react/no-unknown-property */
 import React, {useRef, useState,useEffect} from 'react';
 import { useFrame, useThree ,useLoader } from '@react-three/fiber';
-import CustomObject from './CustomObject'
 import { OrbitControls, useGLTF, Text , Environment,SpotLight, AdaptiveDpr, BakeShadows,PerformanceMonitor ,MeshReflectorMaterial} from '@react-three/drei';
 import { EffectComposer, Bloom, DepthOfField, Vignette, DotScreen, Noise,SSAO, SMAA,GodRays, FXAA,Sepia, SelectiveBloom, ShockWave, HueSaturation, Scanline , Autofocus, LensFlare} from '@react-three/postprocessing';
 import * as THREE from 'three'
@@ -12,16 +11,16 @@ import {getProject,val} from '@theatre/core'
 import { editable as e, SheetProvider,PerspectiveCamera,useCurrentSheet,} from "@theatre/r3f";
 import {TextureLoader} from 'three';
 import {useScroll, useTexture, Html} from '@react-three/drei';
-import state1 from '../public/json/state1.json'
+import statefinal from '../public/json/state-final.json'
 import './style.css'
 import {gsap} from 'gsap'
 
-const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
+const demoSheet = getProject('Demo Project',{state:statefinal}).sheet('Demo Sheet')
 
 
 
 function Model({envMap}) {
-  const gltf = useGLTF('models/final1.glb');
+  const gltf = useGLTF('models/others/compressed.glb');
   const model = gltf.scene;
   model.traverse((child) => {
     if (child.isMesh) {
@@ -121,8 +120,6 @@ function calculateScreenPosition(object3D) {
   vector.project(camera);
   const x = (vector.x * widthHalf) + widthHalf;
   const y = -(vector.y * heightHalf) + heightHalf;
-
-  // console.log(x,y);
 }
 
   
@@ -150,10 +147,9 @@ function calculateScreenPosition(object3D) {
     [normal,roughness,color, height, ao].forEach((texture) => {
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(2, 2);
+      texture.repeat.set(4, 4);
       texture.colorSpace =  THREE.SRGBColorSpace 
     });
-    console.log(normal)
   },[normal,roughness,color, height, ao]);
 
 
@@ -239,10 +235,14 @@ function calculateScreenPosition(object3D) {
           animationFraction = fraction;
           animationTime = sheet.sequence.position;
           animationStarted = true;
+          const reset = document.querySelector('.reset');
+          gsap.to(reset,{
+            opacity: 0,
+            duration: 1, ease: "power2.inOut"
+          },0)
+
           animateScene();
         }
-        // scroll.offset = fraction;
-        // console.log(sheet.sequence.position)
       }
     };
     const handleMouseUp = () => {
@@ -294,7 +294,6 @@ function calculateScreenPosition(object3D) {
   var lastTextAnimationFlag = false;
   function animateScene() {
     sheet.sequence.position = animationTime;
-    console.log(animationTime)
     if (animationTime <= sequenceLength) {
       animationTime+= 0.02;
       if(animationTime>11.5 &&  !lastTextAnimationFlag){
@@ -311,11 +310,16 @@ function calculateScreenPosition(object3D) {
       requestAnimationFrame(animateScene);
     }
     else{
-      animateFooter();}
+      const reset = document.querySelector('.reset');
+      gsap.to(reset,{
+        opacity: 1,
+        duration: 1, ease: "power2.inOut"
+      },0)
+      animateFooter();
+    }
 
   }
   function resetAnimations(){
-    console.log(sheet.sequence.position)
     if(sheet.sequence.position>0)
     {
       const t2 = gsap.timeline();
@@ -339,8 +343,6 @@ function calculateScreenPosition(object3D) {
       lastTextAnimationFlag = false;
       const knob = document.querySelector('.knob');
       const circle = document.querySelector('.circle');
-      knob.style.opacity = 1;
-      circle.style.opacity = 1;
       const centerText = document.querySelector('.centerText');
       const readMore = document.querySelector('.readMore');
       const share = document.querySelector('.share');
@@ -349,7 +351,7 @@ function calculateScreenPosition(object3D) {
       const obj = {left: 45, opacity: 1};
       timeline.to(share,
       {
-        left: 0,
+        left: 40,
         duration: 1,
         ease: "power2.inOut"
       },0)
@@ -370,7 +372,24 @@ function calculateScreenPosition(object3D) {
         opacity: 0,
         duration: 1, ease: "power2.inOut"
       },0.2)
-    } 
+      timeline.to(knob,{
+        opacity: 1,
+        duration: 1, ease: "power2.inOut"
+      },0.5)
+      timeline.to(circle,{
+        opacity: 1,
+        duration: 1, ease: "power2.inOut"
+      },0.5)
+      const circleRect = circle.getBoundingClientRect();
+      const knobRect = knob.getBoundingClientRect();
+      const circleCenterX = circleRect.left + circleRect.width / 2;
+      const circleCenterY = circleRect.top + circleRect.height / 2;
+      const newX = circleCenterX + Math.cos(Math.PI*2) * (circleRect.width / 2 -1);
+      const newY = circleCenterY + Math.sin(Math.PI*2) * (circleRect.height / 2 -1 );
+      knob.style.left = newX - knobRect.width /2 + 'px';
+      knob.style.top = newY - knobRect.height /2+ 'px';
+    }
+
   }
   const reset = document.querySelector('.reset');
   reset.addEventListener('click',resetAnimations);
@@ -409,7 +428,7 @@ function calculateScreenPosition(object3D) {
     return (
       <>
         <e.mesh receiveShadow theatreKey='floor' rotation={[-Math.PI/2, 0,0]}>
-          <planeGeometry />
+          <planeGeometry args={[2,2]}/>
           <MeshReflectorMaterial
             roughnessMap = {roughness}
             normalMap = {normal}
@@ -455,7 +474,7 @@ function calculateScreenPosition(object3D) {
             <meshStandardMaterial attach="material" opacity={0} color="white" emissive="white" emissiveIntensity={1.75} side={THREE.DoubleSide}/>
           </Text>
         </e.group>
-        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={32} />
+        <fog attach="fog" color={new THREE.Color('#a3a3a3')} near={3} far={22} />
         <e.ambientLight theatreKey="AmbientLight" intensity={0.02}/>
         <e.spotLight theatreKey="SpotLight"
           castShadow 
@@ -472,13 +491,8 @@ function calculateScreenPosition(object3D) {
           fov={30}
         />
         <e.pointLight theatreKey="tubelight-enhance" castShadow={false}/>
-        {/* <e.pointLight theatreKey="PointLight" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
-        {/* <e.pointLight theatreKey="PointLight1" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight2" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-        {/* <e.pointLight theatreKey="PointLight3" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight4" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
-        {/* <e.pointLight theatreKey="PointLight5" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
-        {/* <e.pointLight theatreKey="PointLight6" castShadow={false} {...pointLightConfig} shadow-bias={bias} /> */}
         <e.pointLight theatreKey="PointLight7" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight8" castShadow={false} {...pointLightConfig} shadow-bias={bias} />
         <e.pointLight theatreKey="PointLight9" castShadow={false} {...pointLightConfig} shadow-bias={bias} />

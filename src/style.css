@@ -93,7 +93,7 @@ body{
 }
 
 .circleScroll{
-    --knob-dimension: 18px;
+    --knob-dimension: max(14px , 1.5vh);
     --circle-side: 65vh;
     --circle-top: calc(50% - var(--circle-side) / 2);
     --circle-left: calc(65% - var(--circle-side) / 2);
