@@ -7,10 +7,9 @@ import * as THREE from 'three';
 // import {ScrollControls} from '@react-three/drei';
 import {getProject} from '@theatre/core'
 import { SheetProvider} from '@theatre/r3f';
-import state1 from '../public/json/state1.json'
+import statefinal from '../public/json/state-final.json'
 
-
-const demoSheet = getProject('Demo Project',{state:state1}).sheet('Demo Sheet')
+const demoSheet = getProject('Demo Project',{state:statefinal}).sheet('Demo Sheet')
 
 function App() {
   return (

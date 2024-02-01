@@ -316,7 +316,7 @@ function calculateScreenPosition(object3D) {
   }
   function resetAnimations(){
     console.log(sheet.sequence.position)
-    if(sheet.sequence.position>1)
+    if(sheet.sequence.position>0)
     {
       const t2 = gsap.timeline();
       t2.to(porsche_911.current.material,{
