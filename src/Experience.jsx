@@ -481,7 +481,7 @@ export default function Experience() {
         <PerformanceMonitor />
         <EffectComposer>
           {/* <DotScreen angle={0} opacity={0.001} scale={0.8}   /> */}
-          {/* <Bloom luminanceThreshold={0} luminanceSmoothing={10} height={300} /> */}
+          <Bloom luminanceThreshold={0} luminanceSmoothing={10} height={300} />
           {/* <DepthOfField focusDistance={1} focalLength={0} bokehScale={3} height={1000} /> */}
           <Vignette eskil={false} offset={0} darkness={1.1} />
             <SMAA />
