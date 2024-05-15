@@ -5,9 +5,7 @@ import './index.css'
 import studio from '@theatre/studio'
 import extension from '@theatre/r3f/dist/extension'
 
-// studio.extend(extension)
-// studio.initialize()
-// Vite
+
 if (import.meta.env.DEV) {
   studio.initialize()
   studio.extend(extension)
